@@ -39,6 +39,7 @@ All notable changes to Sourcegraph are documented in this file.
 - Fixed an issue where Sourcegraph could lose track of repositories on gitserver, leaving behind unnecessary data and inconsistent clone status in the UI. [#60627](https://github.com/sourcegraph/sourcegraph/pull/60627)
 - The "Commits" button in repository and folder pages links to commits in the current revision instead of in the default branch. [#61408](https://github.com/sourcegraph/sourcegraph/pull/61408)
 - The "Commits" button in repository and folder pages uses Perforce language and links to `/-/changelists` for Perforce depots when the experimental feature `perforceChangelistMapping` is enabled. [#61408](https://github.com/sourcegraph/sourcegraph/pull/61408)
+- Fixed an issue that could cause repositories to be recloned indefinitely when a repo has been deleted on a codehost and recreated under the same name. [#60643](https://github.com/sourcegraph/sourcegraph/pull/60643)
 
 ## 5.3.3
 
