@@ -42,7 +42,10 @@ go_test(
         "store_test.go",
     ],
     embed = [":shared"],
-    tags = ["requires-network"],
+    tags = [
+        TAG_PLATFORM_GRAPH,
+        "requires-network",
+    ],
     deps = [
         "//internal/database",
         "//internal/database/dbtest",

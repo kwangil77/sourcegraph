@@ -35,6 +35,7 @@ go_test(
     name = "cloneurl_test",
     srcs = ["clone_url_test.go"],
     embed = [":cloneurl"],
+    tags = [TAG_PLATFORM_SOURCE],
     deps = [
         "//internal/database/dbmocks",
         "//internal/extsvc/awscodecommit",

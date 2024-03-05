@@ -34,4 +34,5 @@ go_test(
     name = "downloader_test",
     srcs = ["source_osv_test.go"],
     embed = [":downloader"],
+    tags = [TAG_PLATFORM_GRAPH],
 )

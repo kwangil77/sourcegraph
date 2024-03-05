@@ -33,6 +33,7 @@ go_test(
     ],
     embed = [":repoupdater"],
     tags = [
+        TAG_PLATFORM_SOURCE,
         # Test requires localhost database
         "requires-network",
     ],

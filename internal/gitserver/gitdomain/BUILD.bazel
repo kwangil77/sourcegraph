@@ -29,6 +29,7 @@ go_test(
         "common_test.go",
     ],
     embed = [":gitdomain"],
+    tags = [TAG_PLATFORM_SOURCE],
     deps = [
         "//internal/api",
         "@com_github_google_go_cmp//cmp",

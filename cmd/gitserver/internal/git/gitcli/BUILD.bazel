@@ -56,6 +56,7 @@ go_test(
         "util_test.go",
     ],
     embed = [":gitcli"],
+    tags = [TAG_PLATFORM_SOURCE],
     deps = [
         "//cmd/gitserver/internal/common",
         "//cmd/gitserver/internal/git",
