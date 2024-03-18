@@ -283,6 +283,6 @@ class ScheduleRepositoryPermissionsSyncActionContainer extends React.PureCompone
     }
 
     private scheduleRepositoryPermissions = async (): Promise<void> => {
-        await scheduleRepositoryPermissionsSync({ repository: this.props.repo.id }).toPromise()
+        await scheduleRepositoryPermissionsSync({ repository: this.props.repo.id })
     }
 }
