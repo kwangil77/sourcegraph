@@ -28,6 +28,7 @@ def container_dependencies(targets):
         if is_external:
             go_binary(
                 name = target_bin,
+                basename = name,
                 embed = [target_lib],
                 visibility = ["//visibility:private"],
                 **kwargs
