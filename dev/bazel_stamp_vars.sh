@@ -2,7 +2,7 @@
 
 echo STABLE_VERSION "$VERSION"
 echo VERSION_TIMESTAMP "$(date +%s)"
-echo STABLE_ZOEKT_VERSION "$ZOEKT_VERSION"
+echo ZOEKT_VERSION "$ZOEKT_VERSION"
 
 # Unstable Buildkite env vars
 echo "BUILDKITE $BUILDKITE"

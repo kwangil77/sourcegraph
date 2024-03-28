@@ -11,7 +11,7 @@ DEPS = [
     "@com_github_sourcegraph_zoekt//cmd/zoekt-merge-index",
 ]
 
-container_dependencies(targets = DEPS)
+container_dependencies(DEPS)
 
 pkg_tar(
     name = "tar_scip-ctags",

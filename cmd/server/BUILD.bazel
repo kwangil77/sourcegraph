@@ -108,9 +108,9 @@ ZOEKT_DEPS = [
 ]
 
 # Declares rules for pkg_tar for each dep in DEPS
-container_dependencies(targets = DEPS)
+container_dependencies(DEPS)
 
-container_dependencies(targets = ZOEKT_DEPS)
+container_dependencies(ZOEKT_DEPS)
 
 pkg_tar(
     name = "tar_syntax-highlighter",

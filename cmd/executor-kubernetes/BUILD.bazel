@@ -7,7 +7,7 @@ DEPS = [
     "//cmd/executor",
 ]
 
-container_dependencies(targets = DEPS)
+container_dependencies(DEPS)
 
 pkg_tar(
     name = "tar_src-cli",
