@@ -15,15 +15,23 @@ def container_dependencies(targets):
     for target, kwargs in targets.items():
         name = get_last_segment(target)
 
-        target_lib = target + ":" + name + "_lib"
-        target_bin = name + "_vbin"
+        is_external = Label(target).repo_name != native.repo_name()
+        if not is_external and len(kwargs) > 0:
+            fail("non-external container dependency {target} shouldn't have additional kwargs, set them at the declaration site".format(target = target))
 
-        go_binary(
-            name = target_bin,
-            embed = [target_lib],
-            visibility = ["//visibility:public"],
-            **kwargs
-        )
+        target_lib = target + ":" + name + "_lib"
+        target_bin = name + "_vbin" if is_external else name
+
+        # If we're including a non workspace local dependency, we need to wrap it in our own
+        # go_binary so we can apply attrs such as x_defs. For workspace local dependencies,
+        # we should add it to the original go_binary and use that instead.
+        if is_external:
+            go_binary(
+                name = target_bin,
+                embed = [target_lib],
+                visibility = ["//visibility:private"],
+                **kwargs
+            )
 
         pkg_tar(
             name = "tar_{}".format(name),
