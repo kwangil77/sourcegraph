@@ -5294,8 +5294,6 @@ def go_dependencies():
         name = "com_github_sourcegraph_zoekt",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/sourcegraph/zoekt",
-        sum = "h1:QnS7KZETcE9g2CvBCF423BMhIXIwtxuvck3N7SKBJC0=",
-        version = "v0.0.0-20240327102325-8cf8887a903a",
         patch_args = ["-p1"],
         patches = [
             "//third_party/com_github_sourcegraph_zoekt:zoekt_archive_index.patch",
@@ -5305,6 +5303,8 @@ def go_dependencies():
             "//third_party/com_github_sourcegraph_zoekt:zoekt_sourcegraph_indexserver.patch",
             "//third_party/com_github_sourcegraph_zoekt:zoekt_webserver.patch",
         ],
+        sum = "h1:QnS7KZETcE9g2CvBCF423BMhIXIwtxuvck3N7SKBJC0=",
+        version = "v0.0.0-20240327102325-8cf8887a903a",
     )
     go_repository(
         name = "com_github_spaolacci_murmur3",
