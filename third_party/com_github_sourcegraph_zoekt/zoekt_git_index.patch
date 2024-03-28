@@ -1,12 +1,13 @@
 diff --git a/cmd/zoekt-git-index/BUILD.bazel b/cmd/zoekt-git-index/BUILD.bazel
-index 0606281..0ce27ff 100644
+index d924f9e..120a792 100644
 --- a/cmd/zoekt-git-index/BUILD.bazel
 +++ b/cmd/zoekt-git-index/BUILD.bazel
-@@ -16,4 +16,6 @@ go_binary(
-     name = "zoekt-git-index",
-     embed = [":zoekt-git-index_lib"],
-     visibility = ["//visibility:public"],
--)
-+    pure = "on",
-+    static = "on",
-+    )
+@@ -4,7 +4,7 @@ go_library(
+     name = "zoekt-git-index_lib",
+     srcs = ["main.go"],
+     importpath = "github.com/sourcegraph/zoekt/cmd/zoekt-git-index",
+-    visibility = ["//visibility:private"],
++    visibility = ["//visibility:public"],
+     deps = [
+         "//cmd",
+         "//ctags",

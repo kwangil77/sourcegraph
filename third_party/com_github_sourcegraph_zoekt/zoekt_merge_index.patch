@@ -1,0 +1,13 @@
+diff --git a/cmd/zoekt-merge-index/BUILD.bazel b/cmd/zoekt-merge-index/BUILD.bazel
+index 7ce9022..6422fcb 100644
+--- a/cmd/zoekt-merge-index/BUILD.bazel
++++ b/cmd/zoekt-merge-index/BUILD.bazel
+@@ -4,7 +4,7 @@ go_library(
+     name = "zoekt-merge-index_lib",
+     srcs = ["main.go"],
+     importpath = "github.com/sourcegraph/zoekt/cmd/zoekt-merge-index",
+-    visibility = ["//visibility:private"],
++    visibility = ["//visibility:public"],
+     deps = ["//:zoekt"],
+ )
+

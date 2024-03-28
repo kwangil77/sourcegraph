@@ -3,15 +3,25 @@ load("//cmd/server:macro.bzl", "container_dependencies", "dependencies_tars")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@container_structure_test//:defs.bzl", "container_structure_test")
 
-DEPS = [
-    "@com_github_sourcegraph_zoekt//cmd/zoekt-archive-index",
-    "@com_github_sourcegraph_zoekt//cmd/zoekt-git-index",
-    "@com_github_sourcegraph_zoekt//cmd/zoekt-sourcegraph-indexserver",
-    "@com_github_sourcegraph_zoekt//cmd/zoekt-webserver",
-    "@com_github_sourcegraph_zoekt//cmd/zoekt-merge-index",
-]
+DEPS = {
+    "@com_github_sourcegraph_zoekt//cmd/zoekt-archive-index": {"x_defs": {
+        "github.com/sourcegraph/zoekt.Version": "{ZOEKT_VERSION}",
+    }},
+    "@com_github_sourcegraph_zoekt//cmd/zoekt-git-index": {"x_defs": {
+        "github.com/sourcegraph/zoekt.Version": "{ZOEKT_VERSION}",
+    }},
+    "@com_github_sourcegraph_zoekt//cmd/zoekt-sourcegraph-indexserver": {"x_defs": {
+        "github.com/sourcegraph/zoekt.Version": "{ZOEKT_VERSION}",
+    }},
+    "@com_github_sourcegraph_zoekt//cmd/zoekt-webserver": {"x_defs": {
+        "github.com/sourcegraph/zoekt.Version": "{ZOEKT_VERSION}",
+    }},
+    "@com_github_sourcegraph_zoekt//cmd/zoekt-merge-index": {"x_defs": {
+        "github.com/sourcegraph/zoekt.Version": "{ZOEKT_VERSION}",
+    }},
+}
 
-container_dependencies(DEPS)
+container_dependencies(targets = DEPS)
 
 pkg_tar(
     name = "tar_scip-ctags",

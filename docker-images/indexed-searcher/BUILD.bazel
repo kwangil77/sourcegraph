@@ -3,9 +3,13 @@ load("//cmd/server:macro.bzl", "container_dependencies", "dependencies_tars")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@container_structure_test//:defs.bzl", "container_structure_test")
 
-DEPS = ["@com_github_sourcegraph_zoekt//cmd/zoekt-webserver"]
+DEPS = {
+    "@com_github_sourcegraph_zoekt//cmd/zoekt-webserver": {"x_defs": {
+        "github.com/sourcegraph/zoekt.Version": "{ZOEKT_VERSION}",
+    }},
+}
 
-container_dependencies(DEPS)
+container_dependencies(targets = DEPS)
 
 filegroup(
     name = "entrypoint",
@@ -27,7 +31,7 @@ oci_image(
         "DATA_DIR": "/data/index",
         "GOGC": "25",
     },
-    tars = dependencies_tars(DEPS) + [":entry_tar"],
+    tars = dependencies_tars(targets = DEPS) + [":entry_tar"],
     user = "sourcegraph",
     workdir = "/home/sourcegraph",
 )

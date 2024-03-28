@@ -3,11 +3,11 @@ load("@container_structure_test//:defs.bzl", "container_structure_test")
 load("//dev:oci_defs.bzl", "image_repository", "oci_image", "oci_push", "oci_tarball")
 load("//cmd/server:macro.bzl", "container_dependencies", "dependencies_tars")
 
-DEPS = [
-    "//cmd/batcheshelper",
-]
+DEPS = {
+    "//cmd/batcheshelper": {},
+}
 
-container_dependencies(DEPS)
+container_dependencies(targets = DEPS)
 
 pkg_tar(
     name = "tar_src-cli",
