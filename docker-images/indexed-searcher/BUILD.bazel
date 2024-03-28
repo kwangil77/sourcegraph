@@ -3,11 +3,9 @@ load("//cmd/server:macro.bzl", "container_dependencies", "dependencies_tars")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@container_structure_test//:defs.bzl", "container_structure_test")
 
-DEPS = {
-    "@com_github_sourcegraph_zoekt//cmd/zoekt-webserver": {"x_defs": {
-        "github.com/sourcegraph/zoekt.Version": "{ZOEKT_VERSION}",
-    }},
-}
+DEPS = [
+    "@com_github_sourcegraph_zoekt//cmd/zoekt-webserver",
+]
 
 container_dependencies(targets = DEPS)
 
