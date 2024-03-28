@@ -462,16 +462,16 @@ func BazelOpsSet(buildOptions bk.BuildOptions, opts CoreTestOperationsOptions, e
 }
 
 func getZoektVersion() (string, error) {
-	var s bytes.Buffer
+	var stdout bytes.Buffer
 	cmd := exec.Command("go", "list", "-m", "github.com/sourcegraph/zoekt")
-	cmd.Stdout = &s
+	cmd.Stdout = &stdout
 	if err := cmd.Run(); errors.Is(err, exec.ErrNotFound) {
 		cmd = exec.Command("bazel", "run", "@go_sdk//:bin/go", "--", "list", "-m", "github.com/sourcegraph/zoekt")
-		cmd.Stdout = &s
+		cmd.Stdout = &stdout
 		if err := cmd.Run(); err != nil {
 			return "", err
 		}
 	}
 
-	return strings.Split(s.String(), "\n")[1], nil
+	return strings.Split(stdout.String(), " ")[1], nil
 }
