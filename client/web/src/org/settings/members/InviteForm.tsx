@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators'
 import { asError, createAggregateError, isErrorLike } from '@sourcegraph/common'
 import { gql } from '@sourcegraph/http-client'
 import type { Scalars } from '@sourcegraph/shared/src/graphql-operations'
+import { TelemetryRecorder, TelemetryV2Props } from '@sourcegraph/shared/src/telemetry'
 import {
     LoadingSpinner,
     Button,
@@ -43,7 +44,7 @@ interface Invited extends InviteUserToOrganizationFields {
     username: string
 }
 
-interface Props {
+interface Props extends TelemetryV2Props {
     orgID: Scalars['ID']
     authenticatedUser: AuthenticatedUser | null
 
@@ -58,6 +59,7 @@ export const InviteForm: React.FunctionComponent<React.PropsWithChildren<Props>>
     authenticatedUser,
     onDidUpdateOrganizationMembers,
     onOrganizationUpdate,
+    telemetryRecorder,
 }) => {
     const [username, setUsername] = useState<string>('')
     const onUsernameChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(event => {
@@ -69,16 +71,21 @@ export const InviteForm: React.FunctionComponent<React.PropsWithChildren<Props>>
 
     const inviteUser = useCallback(() => {
         eventLogger.log('InviteOrgMemberClicked')
+        telemetryRecorder.recordEvent('org.members.inviteButton', 'click')
         ;(async () => {
             setLoading('inviteUserToOrganization')
-            const { invitationURL, sentInvitationEmail } = await inviteUserToOrganization(username, orgID)
+            const { invitationURL, sentInvitationEmail } = await inviteUserToOrganization(
+                username,
+                orgID,
+                telemetryRecorder
+            )
             setInvited({ username, sentInvitationEmail, invitationURL })
             setShowInvitation(true)
             onOrganizationUpdate()
             setUsername('')
             setLoading(undefined)
         })().catch(error => setLoading(asError(error)))
-    }, [onOrganizationUpdate, orgID, setShowInvitation, username])
+    }, [onOrganizationUpdate, orgID, setShowInvitation, username, telemetryRecorder])
 
     const onInviteClick = useCallback<React.MouseEventHandler<HTMLButtonElement>>(() => {
         inviteUser()
@@ -98,7 +105,7 @@ export const InviteForm: React.FunctionComponent<React.PropsWithChildren<Props>>
             } else {
                 setLoading('addUserToOrganization')
                 try {
-                    await addUserToOrganization(username, orgID)
+                    await addUserToOrganization(username, orgID, telemetryRecorder)
                     onDidUpdateOrganizationMembers()
                     setUsername('')
                     setLoading(undefined)
@@ -107,7 +114,7 @@ export const InviteForm: React.FunctionComponent<React.PropsWithChildren<Props>>
                 }
             }
         },
-        [inviteUser, onDidUpdateOrganizationMembers, orgID, username, viewerCanAddUserToOrganization]
+        [inviteUser, onDidUpdateOrganizationMembers, orgID, username, viewerCanAddUserToOrganization, telemetryRecorder]
     )
 
     return (
@@ -203,7 +210,8 @@ export const InviteForm: React.FunctionComponent<React.PropsWithChildren<Props>>
 
 function inviteUserToOrganization(
     username: string,
-    organization: Scalars['ID']
+    organization: Scalars['ID'],
+    telemetryRecorder: TelemetryRecorder
 ): Promise<InviteUserToOrganizationResult['inviteUserToOrganization']> {
     return lastValueFrom(
         requestGraphQL<InviteUserToOrganizationResult, InviteUserToOrganizationVariables>(
@@ -227,16 +235,22 @@ function inviteUserToOrganization(
             map(({ data, errors }) => {
                 if (!data?.inviteUserToOrganization || (errors && errors.length > 0)) {
                     eventLogger.log('InviteOrgMemberFailed')
+                    telemetryRecorder.recordEvent('org.members', 'inviteFailed')
                     throw createAggregateError(errors)
                 }
                 eventLogger.log('OrgMemberInvited')
+                telemetryRecorder.recordEvent('org.members', 'invite')
                 return data.inviteUserToOrganization
             })
         )
     )
 }
 
-function addUserToOrganization(username: string, organization: Scalars['ID']): Promise<void> {
+function addUserToOrganization(
+    username: string,
+    organization: Scalars['ID'],
+    telemetryRecorder: TelemetryRecorder
+): Promise<void> {
     return requestGraphQL<AddUserToOrganizationResult, AddUserToOrganizationVariables>(
         gql`
             mutation AddUserToOrganization($organization: ID!, $username: String!) {
@@ -254,9 +268,11 @@ function addUserToOrganization(username: string, organization: Scalars['ID']): P
             map(({ data, errors }) => {
                 if (!data?.addUserToOrganization || (errors && errors.length > 0)) {
                     eventLogger.log('AddOrgMemberFailed')
+                    telemetryRecorder.recordEvent('org.members', 'addFailed')
                     throw createAggregateError(errors)
                 }
                 eventLogger.log('OrgMemberAdded')
+                telemetryRecorder.recordEvent('org.members', 'add')
             })
         )
         .toPromise()

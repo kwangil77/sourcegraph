@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { asError, isErrorLike } from '@sourcegraph/common'
+import { TelemetryV2Props } from '@sourcegraph/shared/src/telemetry'
 import { Button, Container, PageHeader, LoadingSpinner, Link, Input, ErrorAlert, Form } from '@sourcegraph/wildcard'
 
 import { ORG_NAME_MAX_LENGTH, VALID_ORG_NAME_REGEXP } from '..'
@@ -13,13 +14,14 @@ import { createOrganization } from '../backend'
 
 import styles from './NewOrganizationPage.module.scss'
 
-interface Props {}
+interface Props extends TelemetryV2Props {}
 
-export const NewOrganizationPage: React.FunctionComponent<React.PropsWithChildren<Props>> = () => {
+export const NewOrganizationPage: React.FunctionComponent<React.PropsWithChildren<Props>> = ({ telemetryRecorder }) => {
     const navigate = useNavigate()
     useEffect(() => {
         eventLogger.logViewEvent('NewOrg')
-    }, [])
+        telemetryRecorder.recordEvent('org.new', 'view')
+    }, [telemetryRecorder])
     const [loading, setLoading] = useState<boolean | Error>(false)
     const [name, setName] = useState<string>('')
     const [displayName, setDisplayName] = useState<string>('')
@@ -42,14 +44,14 @@ export const NewOrganizationPage: React.FunctionComponent<React.PropsWithChildre
             }
             setLoading(true)
             try {
-                const org = await createOrganization({ name, displayName })
+                const org = await createOrganization({ name, displayName, telemetryRecorder })
                 setLoading(false)
                 navigate(org.settingsURL!)
             } catch (error) {
                 setLoading(asError(error))
             }
         },
-        [displayName, navigate, name]
+        [displayName, navigate, name, telemetryRecorder]
     )
 
     return (
