@@ -5,6 +5,7 @@ import classNames from 'classnames'
 
 import { Timestamp } from '@sourcegraph/branded/src/components/Timestamp'
 import { useMutation, useQuery } from '@sourcegraph/http-client'
+import { TelemetryV2Props } from '@sourcegraph/shared/src/telemetry'
 import {
     Container,
     PageHeader,
@@ -282,7 +283,7 @@ const CorruptionLogsContainer: FC<CorruptionLogProps> = props => {
     )
 }
 
-interface RepoSettingsMirrorPageProps {
+interface RepoSettingsMirrorPageProps extends TelemetryV2Props {
     repo: SettingsAreaRepositoryFields
     disablePolling?: boolean
 }
@@ -293,8 +294,13 @@ interface RepoSettingsMirrorPageProps {
 export const RepoSettingsMirrorPage: FC<RepoSettingsMirrorPageProps> = ({
     repo: initialRepo,
     disablePolling = false,
+    telemetryRecorder,
 }) => {
-    eventLogger.logPageView('RepoSettingsMirror')
+    useEffect(() => {
+        eventLogger.logPageView('RepoSettingsMirror')
+        telemetryRecorder.recordEvent('repo.settings.mirror', 'view')
+    }, [telemetryRecorder])
+
     const [reachable, setReachable] = useState<boolean>()
     const [recloneRepository] = useMutation<RecloneRepositoryResult, RecloneRepositoryVariables>(
         RECLONE_REPOSITORY_MUTATION,
@@ -319,7 +325,7 @@ export const RepoSettingsMirrorPage: FC<RepoSettingsMirrorPageProps> = ({
         <>
             <PageTitle title="Mirror settings" />
             <PageHeader path={[{ text: 'Mirroring and cloning' }]} headingElement="h2" className="mb-3" />
-            <RepoSettingsOptions repo={repo} />
+            <RepoSettingsOptions repo={repo} telemetryRecorder={telemetryRecorder} />
             <Container className="repo-settings-mirror-page">
                 {error && <ErrorAlert error={error} />}
 

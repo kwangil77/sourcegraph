@@ -14,11 +14,12 @@ interface Props extends RepositoryBranchesAreaPageProps {}
 
 /** A page that shows all of a repository's branches. */
 export const RepositoryBranchesAllPage: FC<Props> = props => {
-    const { repo } = props
+    const { repo, telemetryRecorder } = props
 
     useEffect(() => {
         eventLogger.logViewEvent('RepositoryBranchesAll')
-    }, [])
+        telemetryRecorder.recordEvent('repo.branches.all', 'view')
+    }, [telemetryRecorder])
 
     const queryBranches = useCallback(
         (args: FilteredConnectionQueryArguments): Observable<GitRefConnectionFields> =>

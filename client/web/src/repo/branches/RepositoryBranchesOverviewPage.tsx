@@ -100,6 +100,7 @@ export class RepositoryBranchesOverviewPage extends React.PureComponent<Props, S
 
     public componentDidMount(): void {
         eventLogger.logViewEvent('RepositoryBranchesOverview')
+        this.props.telemetryRecorder.recordEvent('repo.branches', 'view')
 
         this.subscriptions.add(
             this.componentUpdates
