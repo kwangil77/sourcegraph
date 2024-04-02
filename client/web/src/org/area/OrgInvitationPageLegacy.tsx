@@ -52,7 +52,6 @@ export const OrgInvitationPageLegacy = withAuthenticatedUser(
 
         public componentDidMount(): void {
             eventLogger.logViewEvent('OrgInvitation')
-            console.log(this.props.telemetryRecorder)
             this.props.telemetryRecorder.recordEvent('org.invitation', 'view')
 
             const orgChanges = this.componentUpdates.pipe(
