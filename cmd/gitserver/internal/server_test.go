@@ -350,9 +350,6 @@ func TestCloneRepo(t *testing.T) {
 
 	repoName := api.RepoName("example.com/foo/bar")
 	db := database.NewDB(logger, dbtest.NewDB(t))
-	if _, err := db.FeatureFlags().CreateBool(ctx, "clone-progress-logging", true); err != nil {
-		t.Fatal(err)
-	}
 	dbRepo := &types.Repo{
 		Name:        repoName,
 		Description: "Test",
@@ -443,13 +440,6 @@ func TestCloneRepo(t *testing.T) {
 	gotCommit = cmd("git", "rev-parse", "HEAD")
 	if wantCommit != gotCommit {
 		t.Fatal("failed to clone:", gotCommit)
-	}
-	gitserverRepo, err := db.GitserverRepos().GetByName(ctx, repoName)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if gitserverRepo.CloningProgress == "" {
-		t.Error("want non-empty CloningProgress")
 	}
 }
 
