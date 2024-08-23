@@ -1,0 +1,71 @@
+name: Build the server Docker image
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "*"
+  pull_request:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: kwangil77/sourcegraph-server-oss
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Install musl-tools
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+      - name: Install Golang
+        uses: actions/setup-go@v3
+        with:
+          go-version: "^1.19.5"
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: "7.24.2"
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for main image
+        id: meta-main
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+            type=sha
+
+      - name: Run pre-build script
+        run: ./pre-build.sh
+        working-directory: ./cmd/server
+
+      - name: Run build script
+        run: ./build.sh
+        working-directory: ./cmd/server
+        env:
+          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          VERSION: v4.4.2
+
+      - name: Tag and push Docker images
+        run: |
+          while IFS= read -r tag; do
+            docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest $tag
+            docker push $tag
+          done <<< $TAGS
+        env:
+          TAGS: ${{ steps.meta-main.outputs.tags }}

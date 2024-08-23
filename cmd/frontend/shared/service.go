@@ -4,7 +4,9 @@ package shared
 import (
 	"context"
 
+	"github.com/sourcegraph/sourcegraph/cmd/frontend/auth/providers/httpauth"
 	"github.com/sourcegraph/sourcegraph/cmd/frontend/enterprise"
+	"github.com/sourcegraph/sourcegraph/cmd/frontend/envvar"
 	"github.com/sourcegraph/sourcegraph/cmd/frontend/internal/cli"
 	"github.com/sourcegraph/sourcegraph/internal/conf/conftypes"
 	"github.com/sourcegraph/sourcegraph/internal/database"
@@ -24,7 +26,10 @@ func (svc) Configure() (env.Config, []debugserver.Endpoint) {
 }
 
 func (svc) Start(ctx context.Context, observationCtx *observation.Context, ready service.ReadyFunc, config env.Config) error {
-	ossSetupHook := func(_ database.DB, _ conftypes.UnifiedWatchable) enterprise.Services {
+	ossSetupHook := func(db database.DB, _ conftypes.UnifiedWatchable) enterprise.Services {
+		if envvar.OAuth2ProxyMode() {
+			httpauth.Init(db, envvar.OAuth2ProxyPreferEmailToUsername(), envvar.OAuth2ProxySecretToken())
+		}
 		return enterprise.DefaultServices()
 	}
 	return CLIMain(ctx, observationCtx, ready, ossSetupHook)

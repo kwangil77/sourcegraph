@@ -23,6 +23,9 @@ var openGraphPreviewServiceURL = env.Get("OPENGRAPH_PREVIEW_SERVICE_URL", "", "T
 var extsvcConfigFile = env.Get("EXTSVC_CONFIG_FILE", "", "EXTSVC_CONFIG_FILE can contain configurations for multiple code host connections. See https://docs.sourcegraph.com/admin/config/advanced_config_file for details.")
 var extsvcConfigAllowEdits, _ = strconv.ParseBool(env.Get("EXTSVC_CONFIG_ALLOW_EDITS", "false", "When EXTSVC_CONFIG_FILE is in use, allow edits in the application to be made which will be overwritten on next process restart"))
 var srcServeGitUrl = env.Get("SRC_SERVE_GIT_URL", "http://127.0.0.1:3434", "URL that servegit should listen on.")
+var oauth2ProxyMode, _ = strconv.ParseBool(env.Get("OAUTH2_PROXY_MODE", "false", "run as OAuth2 proxy, with added authz checks"))
+var oauth2ProxyPreferEmailToUsername, _ = strconv.ParseBool(env.Get("OAUTH2_PROXY_PREFER_EMAIL_TO_USERNAME", "false", "prefer email to username for OAuth2 users"))
+var oauth2ProxySecretToken = env.Get("OAUTH2_PROXY_SECRET_TOKEN", "", "secret token to provide in the headers for OAuth2 proxy")
 
 // SourcegraphDotComMode is true if this server is running Sourcegraph.com
 // (solely by checking the SOURCEGRAPHDOTCOM_MODE env var). Sourcegraph.com shows
@@ -54,4 +57,16 @@ func ExtsvcConfigAllowEdits() bool {
 // SrcServeGitUrl returns value of SRC_SERVE_GIT_URL environment variable
 func SrcServeGitUrl() string {
 	return srcServeGitUrl
+}
+
+func OAuth2ProxyMode() bool {
+	return oauth2ProxyMode
+}
+
+func OAuth2ProxyPreferEmailToUsername() bool {
+	return oauth2ProxyPreferEmailToUsername
+}
+
+func OAuth2ProxySecretToken() string {
+	return oauth2ProxySecretToken
 }
