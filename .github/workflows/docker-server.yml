@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - v5.0.6_add_oauth2_proxy_mode
     tags:
       - "*"
   pull_request:
